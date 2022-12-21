@@ -6,3 +6,5 @@ enum class InputType
 	Coordinate,
 	Button
 };
+
+typedef std::variant<bool, int, float> InputValueTypes;

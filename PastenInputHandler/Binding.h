@@ -1,6 +1,5 @@
 #pragma once
 
-#include <any>
 #include <functional>
 
 #include "Command.h"
@@ -11,7 +10,9 @@ class Binding
 public:
 	std::string commandName;
 	std::string inputName;
-	Binding(std::string commandName, std::string inputName, std::function<std::any (std::any)> convertionFunc);
+	Binding(std::string commandName, std::string inputName, std::function<InputValueTypes (InputValueTypes )> convertionFunc);
 private:
-	std::function<std::any (std::any)> _ConvertionFunc;
+	std::function<InputValueTypes  (InputValueTypes )> _ConvertionFunc;
 };
+
+InputValueTypes DefaultConvertionFunction(InputValueTypes val);

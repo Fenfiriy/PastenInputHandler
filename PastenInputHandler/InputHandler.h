@@ -21,11 +21,13 @@ public:
 
 	void AddCommand(std::string commandName, CommandType commandType = CommandType::Button);
 	void AddInput(std::string inputName);
-	void AddInput(std::string inputName, InputType inputType, std::function<std::any()> getValFunc);
-	void AddBinding(std::string commandName, std::string inputName, std::function<std::any(std::any)> convertionFunc = [](std::any inputValue) { return inputValue; });
+	void AddInput(std::string inputName, InputType inputType, std::function<InputValueTypes  ()> getValFunc);
+	void AddBinding(std::string commandName, std::string inputName, std::function<InputValueTypes (InputValueTypes)> convertionFunc = DefaultConvertionFunction);
 
-	std::any GetInputValue(std::string inputName);
-	std::any GetInputValue(std::string inputName, std::map<std::string, std::any> inputState);
+	InputValueTypes GetValueOfInput(std::string inputName);
+	InputValueTypes GetValueOfInput(std::string inputName, std::map<std::string, InputValueTypes > inputState);
+
+	InputValueTypes GetStateOfCommand(std::string commandName);
 
 	void LoadConfigFromFile();
 	void LoadConfigFromFile(std::string filePath);
@@ -34,8 +36,8 @@ private:
 	std::map<std::string, Command*> _commandMap;
 	std::map<std::string, Input*> _inputMap;
 	std::map<std::pair<std::string, std::string>, Binding*> _bindingMap;
-	std::map<std::string, std::any> _inputState;
+	std::map<std::string, InputValueTypes > _inputState;
 
-	std::string _defaultPath;
+	std::string _defaultPath = "..\\..\\..\\Assets\\Configs\\actionmap.ini";;
 	std::string _name;
 };

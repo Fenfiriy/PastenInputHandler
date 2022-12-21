@@ -8,7 +8,6 @@
 
 InputHandler::InputHandler()
 {
-	LoadConfigFromFile();
 }
 
 void InputHandler::LoadConfigFromFile()
@@ -22,14 +21,14 @@ void InputHandler::LoadConfigFromFile(std::string filePath)
 		printf("Can't load %s", filePath.c_str());
 		return;
 	}
-
+	
 	auto fields = reader.GetFields("Keyboard");
 	for (auto& field : fields)
 	{
 		std::string strCommand = field;
 		std::string strSymbol = reader.Get("Keyboard", field, "");
 
-        AddBinding(strCommand, strSymbol);
+		AddBinding(strCommand, strSymbol);
 	}
 }
 
@@ -43,13 +42,35 @@ void InputHandler::Update()
 	}
 }
 
-std::any InputHandler::GetInputValue(std::string inputName)
+InputValueTypes InputHandler::GetValueOfInput(std::string inputName)
 {
-	return GetInputValue(inputName, _inputState);
+	return GetValueOfInput(inputName, _inputState);
 }
-std::any InputHandler::GetInputValue(std::string inputName, std::map<std::string, std::any> inputState)
+InputValueTypes InputHandler::GetValueOfInput(std::string inputName, std::map<std::string, InputValueTypes> inputState)
 {
 	return inputState[inputName];
+}
+
+InputValueTypes InputHandler::GetStateOfCommand(std::string commandName)
+{
+	InputValueTypes result;
+	if (_commandMap.contains(commandName))
+	{
+		Command* command = _commandMap[commandName];
+		for (auto& bind : _bindingMap)
+		{
+			if (bind.first.first == commandName)
+			{
+				std::string inputName = bind.first.second;
+
+				InputValueTypes temp = GetValueOfInput(inputName);
+
+				if (temp > result)
+					result = temp;
+			}
+		}
+	}
+	return result;
 }
 
 void InputHandler::AddCommand(std::string commandName, CommandType commandType)
@@ -63,13 +84,13 @@ void InputHandler::AddInput(std::string inputName)
 	auto newInput = new Input(inputName);
 	_inputMap.insert_or_assign(inputName, newInput);
 }
-void InputHandler::AddInput(std::string inputName, InputType inputType, std::function<std::any()> getValFunc)
+void InputHandler::AddInput(std::string inputName, InputType inputType, std::function<InputValueTypes  ()> getValFunc)
 {
 	auto newInput = new Input(inputName, inputType, getValFunc);
 	_inputMap.insert_or_assign(inputName, newInput);
 }
 
-void InputHandler::AddBinding(std::string commandName, std::string inputName, std::function<std::any (std::any)> convertionFunc)
+void InputHandler::AddBinding(std::string commandName, std::string inputName, std::function<InputValueTypes  (InputValueTypes )> convertionFunc)
 {
 	if (!_commandMap.contains(commandName))
 		AddCommand(commandName);

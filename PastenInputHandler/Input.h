@@ -1,6 +1,6 @@
 #pragma once
 
-#include <any>
+#include <variant>
 #include <functional>
 #include <string>
 
@@ -10,11 +10,11 @@ struct Input
 {
 	std::string name;
 	InputType type;
-	std::function<std::any()> getValueFunction;
+	std::function<InputValueTypes ()> getValueFunction;
 
 	Input(std::string inputName);
-	Input(std::string inputName, InputType inputType, std::function<std::any ()> getValFunc);
+	Input(std::string inputName, InputType inputType, std::function<InputValueTypes  ()> getValFunc);
 };
 
-std::pair<InputType, std::function<std::any()>> GetDefaultsForInput(std::string inputName);
+std::pair<InputType, std::function<InputValueTypes ()>> GetDefaultsForInput(std::string inputName);
 
